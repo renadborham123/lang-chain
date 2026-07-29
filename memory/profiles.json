@@ -1,0 +1,153 @@
+{
+  "smoke-test-gemini-working-2": {
+    "full_name": "Mona Hassan",
+    "job_titles": [
+      "Python backend developer",
+      "backend software engineer"
+    ],
+    "seniority": "Junior",
+    "primary_skills": [
+      "Python",
+      "Django",
+      "FastAPI",
+      "SQL",
+      "PostgreSQL",
+      "Docker",
+      "REST APIs",
+      "Git"
+    ],
+    "domains": [
+      "Backend Development"
+    ],
+    "years_experience": 3.0,
+    "preferred_location": "Cairo, Remote"
+  },
+  "batch-omar-data-txt-eb9f8548aa": {
+    "full_name": "Omar Ali",
+    "job_titles": [
+      "data analyst"
+    ],
+    "seniority": "Not specified",
+    "primary_skills": [
+      "Python",
+      "SQL",
+      "Power BI",
+      "Excel",
+      "pandas"
+    ],
+    "domains": [
+      "Data Analysis"
+    ],
+    "years_experience": 0.0,
+    "preferred_location": "Cairo"
+  },
+  "batch-maya-backend-txt-bf2272766e": {
+    "full_name": "Maya Hassan",
+    "job_titles": [
+      "backend developer"
+    ],
+    "seniority": "Not specified",
+    "primary_skills": [
+      "Python",
+      "FastAPI",
+      "Django",
+      "PostgreSQL",
+      "Docker"
+    ],
+    "domains": [],
+    "years_experience": 0.0,
+    "preferred_location": "Cairo"
+  },
+  "web-profile": {
+    "full_name": "Maya Hassan",
+    "job_titles": [
+      "Backend developer",
+      "Backend software engineer"
+    ],
+    "seniority": "Junior",
+    "primary_skills": [
+      "Python",
+      "FastAPI",
+      "Django",
+      "PostgreSQL",
+      "Docker",
+      "REST APIs",
+      "Git"
+    ],
+    "domains": [
+      "Backend Development"
+    ],
+    "years_experience": 3.0,
+    "preferred_location": "Cairo, Remote"
+  },
+  "web-smoke-cv.txt": {
+    "full_name": "Maya Hassan",
+    "job_titles": [
+      "Backend developer",
+      "Backend software engineer"
+    ],
+    "seniority": "Junior",
+    "primary_skills": [
+      "Python",
+      "FastAPI",
+      "Django",
+      "PostgreSQL",
+      "Docker",
+      "REST APIs",
+      "Git"
+    ],
+    "domains": [
+      "Backend Development"
+    ],
+    "years_experience": 3.0,
+    "preferred_location": "Cairo, Remote"
+  },
+  "web-Abdelrahman_Abozena_CV.pdf": {
+    "full_name": "Abdelrahman Abozena",
+    "job_titles": [
+      "Agentic AI Engineer",
+      "Head of Artificial Intelligence",
+      "Backend AI Engineering Intern",
+      "AI & Data Science Engineer",
+      "Backend Developer"
+    ],
+    "seniority": "Junior",
+    "primary_skills": [
+      "Python",
+      "LLM agents",
+      "Multi-agent systems",
+      "RAG",
+      "FastAPI",
+      "Ollama",
+      "Kafka",
+      "WebSockets",
+      "LangGraph",
+      "Docker",
+      "Machine Learning"
+    ],
+    "domains": [
+      "Agentic AI",
+      "Backend Systems",
+      "Data Science",
+      "NLP"
+    ],
+    "years_experience": 1.0,
+    "preferred_location": "Giza, Egypt"
+  },
+  "web-jobflow-generated-cv.txt": {
+    "full_name": "ABDO ABOZENA",
+    "job_titles": [
+      "Aspiring professional"
+    ],
+    "seniority": "Entry-level",
+    "primary_skills": [
+      "LangGraph",
+      "Agentic AI"
+    ],
+    "domains": [
+      "Artificial Intelligence"
+    ],
+    "years_experience": 0.0,
+    "preferred_location": null
+  }
+}

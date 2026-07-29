@@ -1,0 +1,4 @@
+Maya Hassan
+Backend developer with three years of experience in Cairo.
+Skills: Python, FastAPI, Django, PostgreSQL, Docker, REST APIs, Git.
+Looking for backend software engineer roles in Cairo or remote.

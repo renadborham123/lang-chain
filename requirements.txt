@@ -1,0 +1,18 @@
+langchain==0.3.*
+langchain-community==0.3.*
+langchain-google-genai==2.*
+langgraph==0.2.*
+langgraph-checkpoint-sqlite==2.*
+langsmith==0.1.*
+pydantic==2.*
+requests==2.*
+python-dotenv==1.*
+pypdf==5.*
+
+# 1.44 cannot build its greenlet dependency on Python 3.13/Windows.
+playwright>=1.58,<2
+pytest==8.*
+schedule==1.*
+fastapi==0.115.*
+uvicorn[standard]==0.34.*
+python-multipart==0.0.*
