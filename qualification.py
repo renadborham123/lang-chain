@@ -28,10 +28,18 @@ def qualify_match(match: dict[str, Any], profile: dict[str, Any]) -> dict[str, A
     direct_listing = is_direct_listing(job.get("url", ""))
     reasons: list[str] = []
 
-    if any(word in title for word in ("senior", "lead", "principal", "manager", "director")) and any(word in candidate_seniority for word in ("junior", "entry", "intern")):
+    opportunity_type = job.get("opportunity_type", "job")
+    if any(word in title for word in ("mid-level", "mid level", "senior", "lead", "principal", "manager", "director")) and (
+        profile.get("is_student") or any(word in candidate_seniority for word in ("junior", "entry", "intern", "student"))
+    ):
         return {"status": "excluded", "reasons": ["Role seniority exceeds the candidate profile."], "priority": 0, "direct_listing": direct_listing}
     if not direct_listing:
         return {"status": "review", "reasons": ["This is a search or category page; open it and confirm an individual live listing first."], "priority": 1, "direct_listing": False}
+    if profile.get("is_student") and opportunity_type in {"internship", "graduate"} and score >= 0.28:
+        reasons.append("Career stage and opportunity type fit a student profile.")
+        if keywords:
+            reasons.append(f"{len(keywords)} verified profile skill(s) match.")
+        return {"status": "ready", "reasons": reasons, "priority": 3, "direct_listing": True}
     if len(keywords) >= 2 and score >= 0.25:
         reasons.append(f"{len(keywords)} CV skills are explicitly matched.")
         return {"status": "ready", "reasons": reasons, "priority": 2, "direct_listing": True}

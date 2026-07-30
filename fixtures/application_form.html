@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Application fixture</title></head>
+<body>
+  <h1>Software Engineering Internship</h1>
+  <form id="search">
+    <label>Search jobs <input name="keywords"></label>
+    <button type="submit" aria-label="Search">Search</button>
+  </form>
+  <form id="application">
+    <label>Full name <input name="full_name" autocomplete="name" required></label>
+    <label>Email <input name="email" type="email" autocomplete="email" required></label>
+    <label>Phone <input name="phone" type="tel" autocomplete="tel" required></label>
+    <label>LinkedIn <input name="linkedin"></label>
+    <label>Resume <input name="resume" type="file" required></label>
+    <button type="submit">Submit application</button>
+  </form>
+  <p id="result"></p>
+  <script>
+    document.getElementById('application').addEventListener('submit', event => {
+      event.preventDefault()
+      document.getElementById('result').textContent = 'Application submitted'
+    })
+  </script>
+</body>
+</html>

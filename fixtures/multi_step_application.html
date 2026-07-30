@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Multi-step application fixture</title></head>
+<body>
+  <h1>AI Internship</h1>
+  <form id="application">
+    <section id="step-one">
+      <label>Full name <input name="full_name" autocomplete="name" required></label>
+      <label>Email <input name="email" type="email" autocomplete="email" required></label>
+      <label>Resume <input name="resume" type="file" required></label>
+      <button id="next" type="button">Next</button>
+    </section>
+    <section id="step-two" hidden>
+      <p>Review your information</p>
+      <button id="review" type="button">Review your application</button>
+    </section>
+    <section id="step-three" hidden>
+      <button type="submit">Submit application</button>
+    </section>
+  </form>
+  <p id="result"></p>
+  <script>
+    document.getElementById('next').addEventListener('click', () => {
+      document.getElementById('step-one').hidden = true
+      document.getElementById('step-two').hidden = false
+    })
+    document.getElementById('review').addEventListener('click', () => {
+      document.getElementById('step-two').hidden = true
+      document.getElementById('step-three').hidden = false
+    })
+    document.getElementById('application').addEventListener('submit', event => {
+      event.preventDefault()
+      document.getElementById('result').textContent = 'Application submitted'
+    })
+  </script>
+</body>
+</html>

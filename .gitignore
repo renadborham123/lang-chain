@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+frontend/node_modules/
+frontend/tsconfig*.tsbuildinfo
+memory/documents/
+memory/model_settings.json
+memory/browser_profiles/
+tmp/

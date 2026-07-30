@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from langchain_core.prompts import ChatPromptTemplate
 
-from nodes import _build_llm
+from model_provider import invoke_prompt
 
 
 _DRAFT_PROMPT = ChatPromptTemplate.from_messages([
@@ -14,10 +14,9 @@ _DRAFT_PROMPT = ChatPromptTemplate.from_messages([
 
 
 def draft_application(profile: dict, title: str, company: str, keywords: list[str]) -> str:
-    response = (_DRAFT_PROMPT | _build_llm()).invoke({
+    return invoke_prompt(_DRAFT_PROMPT, {
         "profile": profile,
         "title": title,
         "company": company,
         "keywords": ", ".join(keywords),
     })
-    return str(response.content).strip()

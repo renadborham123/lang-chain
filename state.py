@@ -1,25 +1,28 @@
-"""
-تعريف الـ State بتاع LangGraph + موديلات Pydantic للـ structured output
-"""
-from typing import TypedDict, List, Optional
+"""LangGraph state and validated domain models."""
+
+from typing import List, Optional, TypedDict
+
 from pydantic import BaseModel, Field
 
 
-# ---------- Pydantic models (structured LLM outputs) ----------
-
 class CVProfile(BaseModel):
-    """البروفايل المستخرج من الـ CV بواسطة الـ LLM"""
-    full_name: Optional[str] = Field(default=None, description="اسم صاحب الـ CV إن وجد")
-    job_titles: List[str] = Field(description="المسميات الوظيفية المناسبة (مثال: Backend Engineer, Data Analyst)")
-    seniority: str = Field(description="المستوى: Junior / Mid / Senior / Lead")
-    primary_skills: List[str] = Field(description="أهم 10-15 مهارة تقنية/فنية من الـ CV")
-    domains: List[str] = Field(description="المجالات (مثال: Fintech, E-commerce, Healthcare)")
-    years_experience: float = Field(description="إجمالي سنوات الخبرة التقريبية")
-    preferred_location: Optional[str] = Field(default=None, description="الموقع المفضل للعمل إن ذُكر")
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    links: List[str] = Field(default_factory=list)
+    job_titles: List[str] = Field(default_factory=list)
+    seniority: str = "Not specified"
+    primary_skills: List[str] = Field(default_factory=list)
+    domains: List[str] = Field(default_factory=list)
+    years_experience: float = 0
+    preferred_location: Optional[str] = None
+    is_student: bool = False
+    education_level: Optional[str] = None
+    graduation_year: Optional[int] = None
+    opportunity_types: List[str] = Field(default_factory=list)
 
 
 class JobPosting(BaseModel):
-    """وظيفة واحدة جاية من مصدر البحث"""
     id: str
     title: str
     company: str
@@ -27,29 +30,30 @@ class JobPosting(BaseModel):
     description: str
     url: str
     source: str = "adzuna"
+    opportunity_type: str = "job"
 
 
 class MatchedJob(BaseModel):
-    """وظيفة بعد عملية الـ matching"""
     job: JobPosting
     matched_keywords: List[str]
-    match_score: float  # 0.0 -> 1.0
+    match_score: float
+    score_breakdown: dict = Field(default_factory=dict)
+    match_reasons: List[str] = Field(default_factory=list)
 
-
-# ---------- LangGraph State ----------
 
 class JobSearchState(TypedDict, total=False):
     user_id: str
     cv_text: str
-    refresh_profile: bool          # لو True يعيد استخراج البروفايل من الـ CV
+    document_id: Optional[str]
+    refresh_profile: bool
     location_override: Optional[str]
     live_browser: bool
     target_roles: List[str]
     excluded_title_terms: List[str]
-    profile: dict                  # CVProfile.model_dump()
+    profile: dict
     search_queries: List[str]
-    raw_jobs: List[dict]           # JobPosting.model_dump() list
-    new_jobs: List[dict]           # بعد استبعاد اللي اتشافت قبل كده
-    matched_jobs: List[dict]       # MatchedJob.model_dump() list
-    final_report: str              # الناتج النهائي بصيغة Markdown
+    raw_jobs: List[dict]
+    new_jobs: List[dict]
+    matched_jobs: List[dict]
+    final_report: str
     error: Optional[str]

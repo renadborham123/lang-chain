@@ -23,6 +23,7 @@
 .single-cv-label { color: #e8eadf; font-size: 13px; font-weight: 800; display: flex; gap: 8px; align-items: center; padding: 9px 12px; }
 .no-cv-button { margin-left: auto; border: 1px solid #b9dd65; color: #182111; background: #c7ec6c; border-radius: 8px; padding: 10px 14px; font-size: 12px; font-weight: 800; display: flex; gap: 7px; align-items: center; box-shadow: 0 5px 18px #0e130d66; }
 .generated-ready { color: #c7ec6c; margin: 7px 10px 2px; font-size: 11px; display: flex; align-items: center; gap: 6px; }
+.generated-ready a { color: inherit; font-weight: 800; }
 .cv-builder textarea, .cv-result textarea { height: 190px; }
 .cv-builder h2 { max-width: 470px; }
 .scoreboard { margin: 0 0 18px; padding: 20px; background: #1b211c; border: 1px solid #303a30; border-radius: 13px; display: grid; grid-template-columns: minmax(210px,.72fr) minmax(300px,1.28fr); gap: 28px; }
@@ -40,6 +41,25 @@
 .job-card { animation: card-enter 430ms cubic-bezier(.2,.8,.2,1) both; }
 .pipeline.running .pipeline-steps i { background: linear-gradient(90deg,#52664e,#c7ec6c,#52664e); background-size: 200% 100%; animation: flow 1s linear infinite; }
 .pipeline.running .pipeline-steps b { animation: pulse-step 1.1s ease-in-out infinite alternate; }
+.card-actions.stacked { flex-wrap: wrap; }
+.card-actions.stacked > * { min-width: calc(50% - 4px); }
+.auto-submit-button { border: 1px solid #41641e; border-radius: 7px; padding: 9px 10px; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px; color: #172016; background: #c7ec6c; flex: 1 0 100%; }
+.tailored-cv-button { border: 1px solid #6d873e; border-radius: 7px; padding: 9px 10px; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; gap: 5px; color: #203014; background: #dcebb8; flex: 1 0 100%; }
+.tailored-cv-button:disabled, .auto-submit-button:disabled, .apply-button:disabled { cursor: wait; opacity: .62; }
+.cv-card-error { color: #9b3024; font-size: 10px; line-height: 1.4; margin: 8px 0 0; }
+.readiness { height: 6px; overflow: hidden; border-radius: 999px; background: #cbd0c4; margin-bottom: 16px; }
+.readiness span { display: block; height: 100%; background: #6c9538; transition: width .25s ease; }
+.missing-list { color: #7d2f24; font-size: 11px; line-height: 1.55; padding-left: 20px; }
+.settings-modal { width: min(620px,100%); }
+.provider-tabs { display: flex; gap: 6px; margin: 18px 0 12px; }
+.provider-tabs button { flex: 1; border: 1px solid #aab4a2; background: transparent; color: #435140; border-radius: 8px; padding: 10px; font-weight: 800; }
+.provider-tabs button.selected { color: #172016; background: #c7ec6c; border-color: #9fc34d; }
+.modal-field { display: flex; flex-direction: column; gap: 5px; margin: 10px 0; }
+.modal-field span { font: 10px 'DM Mono'; color: #657063; text-transform: uppercase; }
+.modal-field input, .model-picker select { width: 100%; border: 1px solid #bbc4b3; border-radius: 7px; background: #f8f9f3; color: #233020; padding: 10px; outline: none; }
+.model-picker { display: grid; grid-template-columns: 150px 1fr; gap: 8px; margin: 13px 0; }
+.save-settings { width: 100%; margin-top: 10px; }
+.application-modal h3 { font-size: 13px; margin: 18px 0 4px; }
 @keyframes flow { to { background-position: -200% 0; } }
 @keyframes pulse-step { to { color: #c7ec6c; transform: translateY(-1px); } }
 @keyframes card-enter { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
