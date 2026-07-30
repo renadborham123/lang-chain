@@ -1,10 +1,43 @@
+# Environment variables and local overrides
+.env
+.env.*
+!.env.example
+
+# Python
 .venv/
+venv/
+env/
 __pycache__/
 *.py[cod]
+*$py.class
 .pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Frontend dependencies and generated build output
 frontend/node_modules/
+frontend/dist/
 frontend/tsconfig*.tsbuildinfo
+
+# Application runtime data
 memory/documents/
-memory/model_settings.json
 memory/browser_profiles/
+memory/model_settings.json
+memory/active_cv.json
+memory/profiles.json
+memory/seen_jobs.json
+memory/*.sqlite
+memory/*.sqlite-shm
+memory/*.sqlite-wal
+output/
 tmp/
+
+# Logs and local tooling
+*.log
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
