@@ -59,42 +59,43 @@
     "preferred_location": "Cairo"
   },
   "web-profile": {
-    "full_name": "Abdelrahman Abozena",
-    "email": "boodyabozena@gmail.com",
-    "phone": null,
+    "full_name": "Jordan Lee",
+    "email": "jordan.lee@example.test",
+    "phone": "+1 202-555-0147",
     "links": [
-      "https://www.linkedin.com/in/abdelrahman-abozena-3b054126/",
-      "https://github.com/Abozena"
+      "https://github.com/jordanlee-test"
     ],
     "job_titles": [
-      "Agentic AI Engineer",
-      "LLM & Backend Systems",
-      "Python"
+      "Machine Learning Intern",
+      "Volunteer Coding Mentor"
     ],
     "seniority": "Student",
     "primary_skills": [
-      "Agentic AI: LLM agents, multi-agent systems, RAG, tool calling, agent orchestration, agent memory, context management, LangGraph, Ollama, Transformers",
-      "Backend & Data: Python, FastAPI, REST APIs, WebSockets, Kafka, SQLite, MySQL, MongoDB",
-      "Engineering & ML: Git, GitHub, Docker, pytest, React, TypeScript, Vite, scikit-learn, model evaluation"
+      "Python",
+      "TypeScript",
+      "SQL",
+      "FastAPI",
+      "React",
+      "LangChain",
+      "LangGraph",
+      "pytest",
+      "Playwright",
+      "Git",
+      "Docker"
     ],
     "domains": [
-      "AI",
-      "Backend Development",
-      "Data Science",
       "Machine Learning",
-      "Natural Language Processing",
-      "Prompt Engineering",
-      "Web Development"
+      "AI",
+      "Data pipelines"
     ],
-    "years_experience": 2.0,
-    "preferred_location": "Giza, Egypt",
+    "years_experience": 0.2,
+    "preferred_location": "Cairo, Egypt",
     "is_student": true,
-    "education_level": "B.Sc. in Computer Science",
+    "education_level": "Bachelor's",
     "graduation_year": null,
     "opportunity_types": [
       "internship",
       "graduate",
-      "part_time",
       "full_time"
     ]
   },
@@ -175,5 +176,90 @@
     ],
     "years_experience": 0.0,
     "preferred_location": null
+  },
+  "web-Abdelrahman_Abozena_CV (2).pdf": {
+    "full_name": "Abdelrahman Abozena",
+    "email": "boodyabozena@gmail.com",
+    "phone": null,
+    "links": [],
+    "job_titles": [
+      "Head of Artificial Intelligence",
+      "Backend AI Engineering Intern",
+      "AI & Data Science Engineer",
+      "Backend Developer"
+    ],
+    "seniority": "Student",
+    "primary_skills": [
+      "Python",
+      "FastAPI",
+      "Kafka",
+      "React",
+      "TypeScript",
+      "LLM agents",
+      "Multi-agent systems",
+      "Retrieval‑augmented generation (RAG)",
+      "Docker",
+      "Git"
+    ],
+    "domains": [
+      "Artificial Intelligence",
+      "Backend Systems",
+      "Machine Learning",
+      "Natural Language Processing",
+      "Data Science",
+      "Agentic AI"
+    ],
+    "years_experience": 1.5,
+    "preferred_location": "Giza, Egypt",
+    "is_student": true,
+    "education_level": "Bachelors",
+    "graduation_year": 2027,
+    "opportunity_types": [
+      "full_time",
+      "part_time",
+      "internship",
+      "graduate"
+    ]
+  },
+  "web-195a9935-e996-4d0d-a90b-e34349286741": {
+    "full_name": "Jordan Lee",
+    "email": "jordan.lee@example.test",
+    "phone": "+1 202-555-0147",
+    "links": [
+      "https://github.com/jordanlee-test"
+    ],
+    "job_titles": [
+      "Machine Learning Intern",
+      "Volunteer Coding Mentor"
+    ],
+    "seniority": "Student",
+    "primary_skills": [
+      "Python",
+      "TypeScript",
+      "SQL",
+      "FastAPI",
+      "React",
+      "LangChain",
+      "LangGraph",
+      "pytest",
+      "Playwright",
+      "Git",
+      "Docker"
+    ],
+    "domains": [
+      "Machine Learning",
+      "AI",
+      "Data pipelines"
+    ],
+    "years_experience": 0.2,
+    "preferred_location": "Cairo, Egypt",
+    "is_student": true,
+    "education_level": "Bachelor's",
+    "graduation_year": null,
+    "opportunity_types": [
+      "internship",
+      "full_time",
+      "graduate"
+    ]
   }
 }
