@@ -26,6 +26,9 @@ frontend/tsconfig*.tsbuildinfo
 memory/documents/
 memory/browser_profiles/
 memory/model_settings.json
+memory/application_answers.json
+memory/career_answers.json
+memory/avatars/
 memory/active_cv.json
 memory/profiles.json
 memory/seen_jobs.json
@@ -37,6 +40,7 @@ tmp/
 
 # Logs and local tooling
 *.log
+.playwright-cli/
 .idea/
 .vscode/
 .DS_Store

@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 
-from backend.main import app
+from backend.main import _dedupe_jobs, app
 
 
 client = TestClient(app)
@@ -25,4 +25,20 @@ def test_invalid_model_provider_is_rejected():
         "/api/model-settings",
         json={"provider": "unknown", "base_url": "http://localhost:11434", "model": "x"},
     )
-    assert response.status_code == 422
+    assert response.status_code == 401
+    assert response.json()["detail"] == "Authentication required."
+
+
+def test_search_result_duplicates_are_collapsed_by_core_title():
+    jobs, removed = _dedupe_jobs(
+        [
+            {"title": "Software Engineer (Python Developer) with 2 - 4 Years of Experience"},
+            {"title": "Software Engineer (Python Developer) | DigiSay | Cairo"},
+            {"title": "Backend Developer"},
+        ]
+    )
+    assert [job["title"] for job in jobs] == [
+        "Software Engineer (Python Developer) with 2 - 4 Years of Experience",
+        "Backend Developer",
+    ]
+    assert removed == 1

@@ -1,1 +1,22 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Jobflow</title></head><body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#20231f" />
+    <meta name="description" content="Wazzefni, your AI qualification and employment agent. Get ready for work, step by step." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/jobflow-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/jobflow-icon-192.png" />
+    <title>Wazzefni</title>
+    <script>
+      (() => {
+        const locale = localStorage.getItem('wazzefni-locale') === 'ar' ? 'ar' : 'en';
+        document.documentElement.lang = locale;
+        document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+        if (locale === 'ar') document.title = 'وظّفني';
+      })();
+    </script>
+  </head>
+  <body><div id="root"></div><script type="module" src="/src/main.tsx"></script></body>
+</html>

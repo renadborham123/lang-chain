@@ -17,3 +17,10 @@ fastapi==0.115.*
 uvicorn[standard]==0.34.*
 python-multipart==0.0.*
 reportlab==4.*
+SQLAlchemy==2.*
+alembic==1.*
+APScheduler==3.*
+keyring==25.*
+httpx==0.28.*
+python-dateutil==2.*
+faster-whisper>=1.1,<2

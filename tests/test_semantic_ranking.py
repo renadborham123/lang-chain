@@ -32,6 +32,19 @@ def test_profile_detection_does_not_lose_student_status():
     assert profile["opportunity_types"][:2] == ["internship", "graduate"]
 
 
+def test_completed_degree_does_not_automatically_mark_candidate_as_student():
+    profile = nodes._normalise_profile_data(
+        {
+            "job_titles": ["Backend Developer"],
+            "primary_skills": ["Python"],
+            "education_level": "Bachelor of Computer Science",
+            "is_student": False,
+        },
+        "Bachelor of Computer Science, Cairo University, graduated 2023",
+    )
+    assert profile["is_student"] is False
+
+
 def test_profile_normalises_object_links_and_structured_list_items():
     profile = nodes._normalise_profile_data(
         {
@@ -76,3 +89,43 @@ def test_student_internship_ranks_above_equivalent_full_time(monkeypatch):
     scores = {item["job"]["id"]: item["match_score"] for item in result["matched_jobs"]}
     assert scores["intern"] > scores["job"]
     assert result["matched_jobs"][0]["score_breakdown"]["career_stage_adjustment"] == 0.22
+
+
+def test_sparse_job_card_can_match_by_target_role_title(monkeypatch):
+    job = _job("backend", "Python Backend Developer", "job")
+    job["description"] = "Posted today"
+    monkeypatch.setattr(nodes, "invoke_prompt", lambda *args, **kwargs: "[]")
+    result = nodes.match_keywords_node(
+        {
+            "new_jobs": [job],
+            "profile": {"is_student": False, "primary_skills": ["FastAPI", "PostgreSQL"]},
+            "target_roles": ["Backend Developer"],
+        }
+    )
+    assert len(result["matched_jobs"]) == 1
+    assert result["matched_jobs"][0]["score_breakdown"]["role_title"] == 1.0
+
+
+def test_generated_queries_do_not_repeat_location_or_work_arrangement(monkeypatch):
+    monkeypatch.setattr(
+        nodes,
+        "invoke_prompt",
+        lambda *args, **kwargs: (
+            "1. Backend Developer Cairo full-time job\n"
+            "2. Python Engineer Remote\n"
+            "3. PostgreSQL Developer\n"
+            "4. DevOps Engineer Docker"
+        ),
+    )
+    result = nodes.generate_queries_node(
+        {
+            "profile": {"job_titles": ["Backend Developer"], "primary_skills": ["Python"]},
+            "location_override": "Cairo",
+            "target_roles": [],
+        }
+    )
+    assert result["search_queries"] == ["Backend Developer", "Python Engineer"]
+
+
+def test_back_end_spelling_matches_backend_role():
+    assert nodes._role_title_score("Back End Developer", ["Backend Developer"]) == 1.0

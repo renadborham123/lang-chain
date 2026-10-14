@@ -38,9 +38,13 @@ QUERY_PROMPT = ChatPromptTemplate.from_messages(
             "Create 4 to 6 concise vacancy search queries. Return one query per line without numbering. "
             "Use distinct role titles. If is_student is true, at least half the queries must explicitly target "
             "internship, intern, trainee, graduate, or student opportunities. Keep target roles but adapt them to "
-            "the candidate's career stage.",
+            "the candidate's career stage. Each query must contain only a role title and, when useful, one core skill. "
+            "Every role must be a realistic next role supported by the profile; do not turn an individual tool or "
+            "database into a different occupation (for example, do not invent 'Docker Engineer'). "
+            "Do not include a city, country, remote/hybrid/onsite, full-time/part-time, or the words job/vacancy; "
+            "the search engine receives location separately.",
         ),
-        ("human", "Profile:\n{profile}\n\nPreferred target roles: {target_roles}"),
+        ("human", "Profile:\n{profile}\n\nPreferred target roles: {target_roles}\nSearch location (do not repeat it): {location}"),
     ]
 )
 
@@ -60,12 +64,41 @@ SEMANTIC_MATCH_PROMPT = ChatPromptTemplate.from_messages(
 )
 
 _STUDENT_TERMS = (
-    "student", "undergraduate", "university", "college", "bachelor", "b.sc",
-    "expected graduation", "graduating", "طالب", "جامعة", "بكالوريوس",
+    "current student", "currently a student", "student at", "undergraduate student",
+    "university student", "college student", "expected graduation", "expected to graduate",
+    "graduating in", "enrolled at", "طالب", "طالبة", "طالب في", "متوقع التخرج",
 )
 _INTERNSHIP_TERMS = ("internship", "intern", "trainee", "training", "co-op", "summer program")
 _GRADUATE_TERMS = ("graduate program", "graduate programme", "new grad", "entry level", "entry-level")
 _SENIOR_TERMS = ("mid-level", "mid level", "senior", "lead", "principal", "manager", "director", "head of")
+_QUERY_NOISE = (
+    "job", "jobs", "vacancy", "vacancies", "opening", "openings", "full time", "full-time",
+    "part time", "part-time", "remote", "hybrid", "onsite", "on-site",
+)
+_ROLE_FAMILIES = {
+    "backend": ("backend", "back end", "api developer", "api engineer", "django", "fastapi", "flask"),
+    "frontend": ("frontend", "front end", "react developer", "ui developer"),
+    "data": ("data engineer", "data analyst", "analytics engineer", "business intelligence", "sql analyst"),
+    "ai": ("ai engineer", "machine learning", "ml engineer", "llm", "data scientist"),
+    "devops": ("devops", "site reliability", "sre", "cloud engineer", "platform engineer"),
+    "mobile": ("mobile developer", "android", "ios developer", "flutter"),
+    "qa": ("qa engineer", "quality assurance", "test engineer"),
+}
+_TOOL_ONLY_ROLE_TERMS = (
+    "postgresql", "mysql", "mongodb", "redis", "docker", "kubernetes", "terraform", "git",
+)
+
+
+def _canonical_role_text(value: str) -> str:
+    return " ".join(str(value).casefold().replace("back-end", "backend").replace("back end", "backend").split())
+
+
+def _role_family(value: str) -> str:
+    normalized = _canonical_role_text(value)
+    return next(
+        (family for family, terms in _ROLE_FAMILIES.items() if any(term in normalized for term in terms)),
+        "",
+    )
 
 
 def _json_from_model(content: Any) -> Any:
@@ -165,20 +198,39 @@ def extract_profile_node(state: JobSearchState) -> dict:
 
 def generate_queries_node(state: JobSearchState) -> dict:
     profile = state["profile"]
+    location = state.get("location_override") or profile.get("preferred_location") or settings.DEFAULT_LOCATION
+    roles = state.get("target_roles") or profile.get("job_titles") or ["software"]
+    allowed_families = {_role_family(role) for role in roles} - {""}
     content = invoke_prompt(
         QUERY_PROMPT,
         {
             "profile": json.dumps(profile, ensure_ascii=False),
             "target_roles": ", ".join(state.get("target_roles", [])) or "Use the profile's role titles",
+            "location": location,
         },
     )
     queries = []
     for line in str(content).splitlines():
         cleaned = re.sub(r"^\s*(?:\d+[.)]|[-•])\s*", "", line).strip()
         cleaned = re.split(r"\s+(?:at|for)\s+[\w]", cleaned, maxsplit=1, flags=re.IGNORECASE)[0].strip()
+        for location_part in re.split(r"[,/|]", str(location)):
+            part = location_part.strip()
+            if len(part) >= 3:
+                cleaned = re.sub(rf"\b{re.escape(part)}\b", " ", cleaned, flags=re.IGNORECASE)
+        for noise in _QUERY_NOISE:
+            cleaned = re.sub(rf"\b{re.escape(noise)}\b", " ", cleaned, flags=re.IGNORECASE)
+        cleaned = re.sub(r"\s+", " ", cleaned).strip(" -|,")
+        query_family = _role_family(cleaned)
+        unsupported_family = allowed_families and query_family and query_family not in allowed_families
+        tool_as_occupation = (
+            allowed_families
+            and not query_family
+            and any(re.search(rf"\b{re.escape(tool)}\b", cleaned, re.IGNORECASE) for tool in _TOOL_ONLY_ROLE_TERMS)
+        )
+        if unsupported_family or tool_as_occupation:
+            continue
         if 1 < len(cleaned.split()) <= 8:
             queries.append(cleaned)
-    roles = state.get("target_roles") or profile.get("job_titles") or ["software"]
     if profile.get("is_student"):
         queries = [f"{role} internship" for role in roles[:3]] + queries
     if not queries:
@@ -292,6 +344,29 @@ def _skill_matches(job: dict, skills: list[str]) -> list[str]:
     return list(dict.fromkeys(matches))
 
 
+def _role_title_score(job_title: str, roles: list[str]) -> float:
+    """Keep relevant sparse search cards when the source omits a description."""
+    ignored = {
+        "a", "an", "and", "associate", "entry", "graduate", "intern", "internship", "junior",
+        "lead", "mid", "of", "principal", "senior", "sr", "the", "trainee",
+    }
+    canonical_title = _canonical_role_text(job_title)
+    title_tokens = _normalise(canonical_title) - ignored
+    if not title_tokens:
+        return 0.0
+    best = 0.0
+    normalized_title = " ".join(canonical_title.replace("-", " ").split())
+    for role in roles:
+        normalized_role = " ".join(_canonical_role_text(role).replace("-", " ").split())
+        role_tokens = _normalise(normalized_role) - ignored
+        if not role_tokens:
+            continue
+        overlap = len(title_tokens & role_tokens) / len(role_tokens)
+        phrase_match = normalized_role in normalized_title or normalized_title in normalized_role
+        best = max(best, 1.0 if phrase_match else overlap)
+    return round(min(1.0, best), 3)
+
+
 def _stage_adjustment(job: dict, profile: dict) -> tuple[float, list[str]]:
     title = job["title"].casefold()
     opportunity = job.get("opportunity_type") or classify_opportunity(job["title"], job.get("description", ""))
@@ -307,6 +382,15 @@ def _stage_adjustment(job: dict, profile: dict) -> tuple[float, list[str]]:
         if any(term in title for term in _SENIOR_TERMS):
             adjustment -= 0.45
             reasons.append("Role seniority conflicts with the student profile.")
+    elif any(term in title for term in _SENIOR_TERMS):
+        years = float(profile.get("years_experience") or 0)
+        seniority = str(profile.get("seniority") or "").casefold()
+        if years < 2 or any(term in seniority for term in ("entry", "junior", "graduate")):
+            adjustment -= 0.35
+            reasons.append("Role seniority is above the candidate's current experience level.")
+        elif years < 4:
+            adjustment -= 0.18
+            reasons.append("This senior title may be a stretch for the candidate's current experience level.")
     return adjustment, reasons
 
 
@@ -343,6 +427,14 @@ def match_keywords_node(state: JobSearchState) -> dict:
     except Exception:
         llm_items = {}
 
+    role_candidates = list(
+        dict.fromkeys(
+            [
+                *(state.get("target_roles") or state["profile"].get("job_titles", [])),
+                *state.get("search_queries", []),
+            ]
+        )
+    )
     target_roles = [role.casefold() for role in state.get("target_roles", [])]
     matched_jobs = []
     for job in jobs:
@@ -361,8 +453,12 @@ def match_keywords_node(state: JobSearchState) -> dict:
         except (TypeError, ValueError):
             semantic_score = lexical_score
         stage_boost, stage_reasons = _stage_adjustment(job, state["profile"])
+        role_score = _role_title_score(job["title"], role_candidates)
         target_boost = 0.08 if target_roles and any(role in job["title"].casefold() for role in target_roles) else 0.0
-        score = max(0.0, min(1.0, 0.65 * semantic_score + 0.35 * lexical_score + stage_boost + target_boost))
+        score = max(
+            0.0,
+            min(1.0, 0.55 * semantic_score + 0.30 * lexical_score + 0.15 * role_score + stage_boost + target_boost),
+        )
         reasons = [
             str(reason) for reason in llm_item.get("reasons", [])
             if isinstance(reason, str) and reason.strip()
@@ -370,7 +466,12 @@ def match_keywords_node(state: JobSearchState) -> dict:
         reasons = list(dict.fromkeys(stage_reasons + reasons))
         if matched and not reasons:
             reasons.append(f"Matches {len(matched)} verified profile skill(s).")
-        if score >= 0.18 and (matched or job.get("opportunity_type") in {"internship", "graduate"}):
+        if score >= 0.18 and (
+            matched
+            or role_score >= 0.34
+            or semantic_score >= 0.35
+            or job.get("opportunity_type") in {"internship", "graduate"}
+        ):
             matched_jobs.append(
                 MatchedJob(
                     job=JobPosting(**job),
@@ -379,6 +480,7 @@ def match_keywords_node(state: JobSearchState) -> dict:
                     score_breakdown={
                         "semantic": round(semantic_score, 3),
                         "skills": round(lexical_score, 3),
+                        "role_title": role_score,
                         "career_stage_adjustment": round(stage_boost, 3),
                         "target_role_boost": round(target_boost, 3),
                     },

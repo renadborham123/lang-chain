@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List
 from urllib.parse import parse_qs, quote_plus, unquote, urlsplit, urlunsplit
 
-from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
 
 
@@ -35,6 +35,15 @@ _CLOSED_RESULT_TERMS = (
     "لم نعد نقبل طلبات",
     "التقديم مغلق",
 )
+_LOCATION_COUNTRY_CODES = {
+    "egypt": "eg", "cairo": "eg", "giza": "eg", "alexandria": "eg",
+    "saudi arabia": "sa", "riyadh": "sa", "jeddah": "sa",
+    "united arab emirates": "ae", "uae": "ae", "dubai": "ae", "abu dhabi": "ae",
+    "canada": "ca", "toronto": "ca", "vancouver": "ca",
+    "united kingdom": "uk", "uk": "uk", "london": "uk",
+    "germany": "de", "berlin": "de", "france": "fr", "paris": "fr",
+    "india": "in", "united states": "us", "usa": "us",
+}
 
 
 def result_looks_inactive(title: str, snippet: str) -> bool:
@@ -128,6 +137,24 @@ def _linkedin_search_url(query: str, location: str) -> str:
 def _clean_listing_url(url: str) -> str:
     parsed = urlsplit(url)
     return urlunsplit((parsed.scheme, parsed.netloc, parsed.path, "", ""))
+
+
+def _listing_matches_location_hint(url: str, location: str) -> bool:
+    """Reject obvious foreign LinkedIn country subdomains in location-specific searches."""
+    requested = re.sub(r"[^a-z]+", " ", location.casefold()).strip()
+    if "remote" in requested:
+        return True
+    expected = next(
+        (code for hint, code in _LOCATION_COUNTRY_CODES.items() if hint in requested),
+        "",
+    )
+    if not expected:
+        return True
+    host = (urlsplit(url).hostname or "").casefold()
+    match = re.fullmatch(r"([a-z]{2})\.linkedin\.com", host)
+    if not match:
+        return True
+    return match.group(1) == expected
 
 
 def _extract_linkedin_results(page, query: str, location: str, max_results: int) -> list[dict[str, str]]:
@@ -228,44 +255,61 @@ def scrape_jobs_for_queries(
             locale="en-US",
         )
         page = context.new_page()
+        captcha_seen = False
         try:
             for query in list(dict.fromkeys(item.strip() for item in queries if item.strip())):
-                page.goto(
-                    _linkedin_search_url(query, location),
-                    wait_until="domcontentloaded",
-                    timeout=35_000,
-                )
-                page_text = page.locator("body").inner_text().casefold()
-                if contains_captcha(page_text):
-                    if live_browser and _wait_for_manual_captcha(page):
-                        page_text = page.locator("body").inner_text().casefold()
+                query_results: list[dict[str, str]] = []
+                try:
+                    page.goto(
+                        _linkedin_search_url(query, location),
+                        wait_until="domcontentloaded",
+                        timeout=35_000,
+                    )
+                    page_text = page.locator("body").inner_text().casefold()
+                    if contains_captcha(page_text):
+                        captcha_seen = True
+                        if live_browser and _wait_for_manual_captcha(page):
+                            query_results = _extract_linkedin_results(
+                                page, query, location, max_results_per_query
+                            )
                     else:
-                        raise CaptchaBlockedError(
-                            "LinkedIn requested human verification. Solve it in live discovery and Jobflow "
-                            "will continue automatically."
+                        query_results = _extract_linkedin_results(
+                            page, query, location, max_results_per_query
                         )
-                query_results = _extract_linkedin_results(page, query, location, max_results_per_query)
+                except PlaywrightError:
+                    # A timeout, blocked response, or transient navigation failure on
+                    # one source must not cancel the other queries or fallbacks.
+                    query_results = []
                 if not query_results:
                     for search_term in _search_terms(query, location):
-                        page.goto(
-                            f"https://html.duckduckgo.com/html/?q={search_term}&df=m",
-                            wait_until="domcontentloaded",
-                            timeout=35_000,
-                        )
-                        page_text = page.locator("body").inner_text().casefold()
-                        if contains_captcha(page_text):
+                        try:
+                            page.goto(
+                                f"https://html.duckduckgo.com/html/?q={search_term}&df=m",
+                                wait_until="domcontentloaded",
+                                timeout=35_000,
+                            )
+                            page_text = page.locator("body").inner_text().casefold()
+                            if contains_captcha(page_text):
+                                captcha_seen = True
+                                continue
+                            query_results = _extract_results(
+                                page, query, location, max_results_per_query
+                            )
+                        except PlaywrightError:
                             continue
-                        query_results = _extract_results(page, query, location, max_results_per_query)
                         if query_results:
                             break
                 for item in query_results:
-                    unique[item["url"]] = item
-        except PlaywrightTimeoutError:
-            # Return partial results gathered before a slow source timed out.
-            pass
+                    if _listing_matches_location_hint(item["url"], location):
+                        unique[item["url"]] = item
         finally:
             context.close()
             browser.close()
+    if not unique and captcha_seen and live_browser:
+        raise CaptchaBlockedError(
+            "The job sources requested human verification and no fallback results were available. "
+            "Complete the verification in the visible browser, then retry."
+        )
     return list(unique.values())
 
 

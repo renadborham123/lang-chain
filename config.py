@@ -29,7 +29,8 @@ class Settings:
     RESULTS_PER_QUERY: int = int(os.getenv("RESULTS_PER_QUERY", "10"))
     TOP_N_JOBS: int = int(os.getenv("TOP_N_JOBS", "10"))
     MEMORY_DB_PATH: str = os.getenv("MEMORY_DB_PATH", "./memory/job_matcher_memory.sqlite")
-    DOCUMENT_TTL_HOURS: int = int(os.getenv("DOCUMENT_TTL_HOURS", "24"))
+    # Zero keeps CVs and generated artifacts until the user explicitly removes them.
+    DOCUMENT_TTL_HOURS: int = int(os.getenv("DOCUMENT_TTL_HOURS", "0"))
     APPLICATION_SESSION_TTL_MINUTES: int = int(os.getenv("APPLICATION_SESSION_TTL_MINUTES", "20"))
 
     @property

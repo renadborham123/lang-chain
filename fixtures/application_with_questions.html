@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Application memory fixture</title></head>
+<body>
+  <h1>Backend Engineer</h1>
+  <form id="application">
+    <label>Full name <input name="full_name" autocomplete="name" required></label>
+    <label>Email <input name="email" type="email" autocomplete="email" required></label>
+    <label>Are you legally authorised to work in Egypt?
+      <select name="work_authorization" required>
+        <option value="">Choose one</option>
+        <option value="yes">Yes</option>
+        <option value="no">No</option>
+      </select>
+    </label>
+    <fieldset>
+      <legend>Preferred work mode</legend>
+      <label><input type="radio" name="work_mode" value="remote" required> Remote</label>
+      <label><input type="radio" name="work_mode" value="hybrid" required> Hybrid</label>
+      <label><input type="radio" name="work_mode" value="onsite" required> On-site</label>
+    </fieldset>
+    <label>Notice period <input name="notice_period" required></label>
+    <label><input name="terms_consent" type="checkbox" required> I confirm these answers are accurate</label>
+    <label>Resume <input name="resume" type="file" required></label>
+    <button type="submit">Submit application</button>
+  </form>
+  <p id="result"></p>
+  <script>
+    document.getElementById('application').addEventListener('submit', event => {
+      event.preventDefault()
+      document.getElementById('result').textContent = 'Application submitted'
+    })
+  </script>
+</body>
+</html>

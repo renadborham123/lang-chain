@@ -119,7 +119,7 @@ def render_cv_pdf(cv_text: str) -> bytes:
         topMargin=15 * mm,
         bottomMargin=15 * mm,
         title="ATS Resume",
-        author="Jobflow",
+        author="Wazzefni",
     )
     styles = getSampleStyleSheet()
     name_style = ParagraphStyle(
@@ -190,7 +190,7 @@ def render_cv_pdf(cv_text: str) -> bytes:
     return buffer.getvalue()
 
 
-def build_cv_document(answers: dict[str, str]) -> dict[str, Any]:
+def build_cv_document(answers: dict[str, str], user_id: str = "local-user") -> dict[str, Any]:
     clean = _clean_answers(answers)
     readiness = cv_readiness(clean)
     if not readiness["ready"]:
@@ -205,7 +205,7 @@ def build_cv_document(answers: dict[str, str]) -> dict[str, Any]:
         timeout=180,
     ))
     pdf_bytes = render_cv_pdf(cv_text)
-    document_id = store_cv(cv_text, pdf_bytes, source_name="jobflow-generated-cv.pdf", answers=clean)
+    document_id = store_cv(cv_text, pdf_bytes, source_name="wazzefni-generated-cv.pdf", answers=clean, user_id=user_id)
     return {
         "cv_text": cv_text,
         "document_id": document_id,

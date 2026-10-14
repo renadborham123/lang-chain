@@ -260,16 +260,17 @@ def _audit_tailored_pdf(source_text: str, tailored_text: str, pdf_bytes: bytes, 
     return {"pages": len(reader.pages), "checks": checks}
 
 
-def build_tailored_cv(document_id: str, job: dict[str, Any]) -> dict[str, Any]:
-    source_text = get_cv_text(document_id)
+def build_tailored_cv(document_id: str, job: dict[str, Any], user_id: str = "local-user") -> dict[str, Any]:
+    source_text = get_cv_text(document_id, user_id)
     key = _job_key(job)
     cached_id = find_document_by_metadata(
+        user_id=user_id,
         tailored_from=document_id,
         tailored_job_key=key,
         tailoring_version=_TAILORING_VERSION,
     )
     if cached_id:
-        metadata = get_cv_metadata(cached_id)
+        metadata = get_cv_metadata(cached_id, user_id)
         return {
             "document_id": cached_id,
             "pdf_url": f"/api/documents/{cached_id}.pdf",
@@ -296,6 +297,7 @@ def build_tailored_cv(document_id: str, job: dict[str, Any]) -> dict[str, Any]:
             "tailoring_version": _TAILORING_VERSION,
             "ats_audit": audit,
         },
+        user_id=user_id,
     )
     return {
         "document_id": tailored_id,

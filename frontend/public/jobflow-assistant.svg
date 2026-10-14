@@ -1,0 +1,32 @@
+<svg width="420" height="300" viewBox="0 0 420 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <title>Wazzefni career qualification assistant illustration</title>
+  <path d="M54 247C73 194 94 171 124 158C161 142 191 166 219 151C254 132 286 84 336 102C374 116 383 170 369 247H54Z" fill="#DDD3FF"/>
+  <path d="M84 247C90 203 113 179 150 179C190 179 205 214 239 211C273 208 293 176 326 182C355 187 366 211 368 247H84Z" fill="#C8FF45"/>
+  <path d="M54 247H369" stroke="#171728" stroke-width="5" stroke-linecap="round"/>
+  <path d="M277 203L289 143C292 128 305 117 321 117H350L337 203H277Z" fill="#FFF" stroke="#171728" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M303 203H362" stroke="#171728" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="321" cy="158" r="8" fill="#C8FF45" stroke="#171728" stroke-width="4"/>
+  <path d="M178 82C178 58 197 39 221 39C245 39 264 58 264 82V91H178V82Z" fill="#171728"/>
+  <circle cx="221" cy="91" r="36" fill="#FFDDBF" stroke="#171728" stroke-width="5"/>
+  <path d="M184 87C191 85 199 77 202 62C215 79 237 84 257 80" stroke="#171728" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="209" cy="94" r="2.5" fill="#171728"/>
+  <circle cx="236" cy="94" r="2.5" fill="#171728"/>
+  <path d="M214 108C220 113 227 113 233 107" stroke="#171728" stroke-width="4" stroke-linecap="round"/>
+  <path d="M173 152C177 129 196 116 221 116C248 116 269 133 272 160L278 219H158L173 152Z" fill="#BCA7FF" stroke="#171728" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M199 123L220 151L242 123" fill="#FFF"/>
+  <path d="M199 123L220 151L242 123" stroke="#171728" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M175 154L140 183L158 203L201 170" fill="#FFDDBF"/>
+  <path d="M175 154L140 183L158 203L201 170" stroke="#171728" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="134" y="176" width="34" height="48" rx="5" transform="rotate(12 134 176)" fill="#FFF" stroke="#171728" stroke-width="4"/>
+  <path d="M140 188L156 191M138 198L154 201M136 208L149 211" stroke="#BCA7FF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M267 158L302 177L292 199L251 181" fill="#FFDDBF"/>
+  <path d="M267 158L302 177L292 199L251 181" stroke="#171728" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M109 140C109 127 119 117 132 117H147V162H132C119 162 109 152 109 140Z" fill="#FFF6CC" stroke="#171728" stroke-width="4"/>
+  <path d="M147 127L161 117V162L147 152" fill="#C8FF45" stroke="#171728" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="130" cy="138" r="3" fill="#171728"/>
+  <path d="M123 148C128 152 134 152 139 148" stroke="#171728" stroke-width="3" stroke-linecap="round"/>
+  <path d="M103 110C95 100 97 88 107 83M151 98C158 89 157 78 150 71" stroke="#171728" stroke-width="4" stroke-linecap="round"/>
+  <path d="M318 92C317 75 326 65 341 59M344 94C352 83 364 80 376 83" stroke="#171728" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="83" cy="75" r="11" fill="#C8FF45" stroke="#171728" stroke-width="4"/>
+  <path d="M68 75H57M109 75H98M83 60V49M83 101V90" stroke="#171728" stroke-width="3" stroke-linecap="round"/>
+</svg>
